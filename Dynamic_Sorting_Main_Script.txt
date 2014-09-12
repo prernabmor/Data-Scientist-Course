@@ -1,0 +1,63 @@
+<script type="text/javascript">
+/*******************   Customize this section according to the report   ***********************************/
+var column_count = 2; //Number of columns in the report
+var current_sort = new Array("",""); //This array should contain one empty value per column.
+var column_names = ["Group","Market"];  // List the names of columns which should be sortable
+/**********************************************************************************************************/
+
+var list_cell = document.getElementById("list1").parentNode; // Lookup the placeholder span item
+var list_row = list_cell.parentNode; // Create Handle for the header row which contains the span item
+var list_table = list_row.parentNode.parentNode; // Create Handle for the table
+
+var rows = list_table.getElementsByTagName("tr");  //Get List of rows in the table
+var row_count = rows.length; // Get row count
+
+var list_array = new Array(); // Create parent array. Each element of this array will represent a row in the list report.
+
+for (i=1; i<row_count;i++) //Loop through the rows. Skipping header row and starting from 1
+{
+    columns = rows[i].getElementsByTagName("td");
+    var list_row_array = new Array();  // Create child array. Each element of this array represents a column on the row.
+    for(j=0;j<column_count;j++) // Loop through the columns for each row
+    {
+        // Read value from the cell and store it in array
+        list_row_array[column_names[j]] = columns[j].getElementsByTagName("span")[0].innerHTML; 
+    }
+     list_array[i-1] = list_row_array;
+}
+
+// Main Function used for sorting.
+function sortList(col_num)
+{
+    if(current_sort[col_num-1] == '' || current_sort[col_num-1] == 'desc'){
+        list_array.sort(dynamicSortAsc(column_names[col_num-1]));
+        current_sort[col_num-1] = 'asc';
+    }
+    else{
+        list_array.sort(dynamicSortDesc(column_names[col_num-1]));
+        current_sort[col_num-1] = 'desc';
+    }
+
+    for(i=0; i<list_array.length;i++)
+    {
+        columns = rows[i+1].getElementsByTagName("td");
+        for(j=0; j<column_count; j++)
+        {
+            columns[j].getElementsByTagName("span")[0].innerHTML = list_array[i][column_names[j]];
+        }
+    }
+}
+
+// Sub function used for sorting. Don't change.
+function dynamicSortAsc(colIndex) {
+    return function (a,b) {
+        return (a[colIndex] < b[colIndex]) ? -1 : (a[colIndex] > b[colIndex]) ? 1 : 0;
+    }
+}
+
+function dynamicSortDesc(colIndex) {
+    return function (a,b) {
+        return (a[colIndex] > b[colIndex]) ? -1 : (a[colIndex] < b[colIndex]) ? 1 : 0;
+    }
+}
+</script>
